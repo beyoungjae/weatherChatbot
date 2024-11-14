@@ -1,0 +1,44 @@
+nav {
+   /* 메뉴 고정 */
+   position: fixed;
+   width: 100%;
+   background-color: #eee;
+   height: 57px;
+   z-index: 99999;
+}
+
+ul {
+   width: 1900px;
+   margin: 0;
+   list-style-type: none;
+   overflow: hidden;
+   display: flex;
+   justify-content: flex-start;
+}
+
+li {
+   display: inline-block;
+}
+
+li:first-child {
+   margin-right: auto;
+}
+
+li:not(:first-child) {
+   margin-left: 0;
+}
+
+li:last-child {
+   margin-right: 20px;
+}
+
+li a {
+   display: block;
+   color: black;
+   padding: 16.3px 20px;
+   text-decoration: none;
+}
+
+li:first-child a {
+   margin-left: 20px;
+}
