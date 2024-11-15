@@ -20,7 +20,15 @@ function Menu() {
             <ul>
                <li style={{ display: 'flex', alignItems: 'center' }}>{isDarkMode ? <DarkModeIcon /> : <LightModeIcon />}</li>
                <li>
-                  <Button onClick={handleModeChange} sx={{ color: isDarkMode ? 'white' : 'black' }}>
+                  <Button
+                     onClick={handleModeChange}
+                     sx={{
+                        color: isDarkMode ? 'white' : 'black',
+                        '&:hover': {
+                           backgroundColor: isDarkMode ? '#555' : '#f0f0f0',
+                        },
+                     }}
+                  >
                      {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
                      {isDarkMode ? '라이트모드' : '다크모드'}
                   </Button>

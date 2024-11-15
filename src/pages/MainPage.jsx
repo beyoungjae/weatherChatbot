@@ -3,8 +3,12 @@ import Menu from '../components/Menu'
 import { Button } from '@mui/material'
 import Footer from '../components/Footer'
 import SearchBanner from '../components/SearchBanner'
+import { useContext } from 'react'
+import { ThemeContext } from '../components/ThemeContext'
 
 function MainPage() {
+   const { isDarkMode } = useContext(ThemeContext)
+
    return (
       <Wrap>
          <Menu />
@@ -18,7 +22,7 @@ function MainPage() {
                      style={{
                         padding: '12px 20px',
                         borderRadius: '8px',
-                        backgroundColor: '#7DFB8C',
+                        backgroundColor: isDarkMode ? '#4F378B' : '#7DFB8C',
                      }}
                   >
                      날씨 요약 확인하기
@@ -28,7 +32,7 @@ function MainPage() {
                      style={{
                         padding: '12px 20px',
                         borderRadius: '8px',
-                        backgroundColor: '#7DFB8C',
+                        backgroundColor: isDarkMode ? '#4F378B' : '#7DFB8C',
                      }}
                   >
                      챗봇이랑 대화하기

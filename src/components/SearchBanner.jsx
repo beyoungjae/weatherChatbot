@@ -2,6 +2,8 @@ import { atom, useRecoilState } from 'recoil'
 import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
 import { useState, useCallback, useEffect } from 'react'
+import { useContext } from 'react'
+import { ThemeContext } from '../components/ThemeContext'
 
 export const searchValueState = atom({
    key: 'searchValueState',
@@ -13,6 +15,8 @@ function SearchBanner() {
    const [isSearchVisible, setIsSearchVisible] = useState(true)
    const [isSearchCompleted, setIsSearchCompleted] = useState(false) // 검색 완료 여부
    const [errorMessage, setErrorMessage] = useState('') // 입력하지 않았을 때 에러 메세지
+
+   const { isDarkMode } = useContext(ThemeContext)
 
    // 로컬 스토리지에 저장된 검색어 불러오기
    useEffect(() => {
@@ -98,7 +102,7 @@ function SearchBanner() {
                         minWidth: '40px',
                         height: '40px',
                         borderRadius: '8px',
-                        backgroundColor: '#7DFB8C',
+                        backgroundColor: isDarkMode ? '#4F378B' : '#7DFB8C',
                      }}
                      onClick={handleSearch}
                   >
@@ -113,8 +117,8 @@ function SearchBanner() {
          {/* 검색 완료 후 재검색 버튼 */}
          {isSearchCompleted && (
             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-               <h2>검색어 저장이 완료 되었습니다!</h2>
-               <Button variant="contained" style={{ backgroundColor: '#7DFB8C', marginTop: '10px', width: '100px', height: '40px', display: 'flex', justifyContent: 'center' }} onClick={handleRetrySearch}>
+               <h2>지역 검색어 저장이 완료 되었습니다!</h2>
+               <Button variant="contained" style={{ backgroundColor: isDarkMode ? '#4F378B' : '#7DFB8C', marginTop: '10px', width: '100px', height: '40px', display: 'flex', justifyContent: 'center' }} onClick={handleRetrySearch}>
                   재검색
                </Button>
             </div>
