@@ -3,74 +3,151 @@ import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
 import { useState, useCallback, useEffect } from 'react'
 import { useContext } from 'react'
-import { ThemeContext } from '../components/ThemeContext'
+import { ThemeContext } from './ThemeContext'
+import { useDispatch, useSelector } from 'react-redux'
+import { setSearchValue as setReduxSearchValue } from '../features/searchSlice'
+import styled from 'styled-components'
+import SearchIcon from '@mui/icons-material/Search'
+import { alpha } from '@mui/material/styles'
 
 export const searchValueState = atom({
    key: 'searchValueState',
    default: '',
 })
 
+// 스타일드 컴포넌트 추가
+const SearchContainer = styled.div`
+   margin-top: 50px;
+   margin-bottom: 20px;
+   width: 100%;
+   max-width: 600px;
+   transition: all 0.3s ease;
+`
+
+const SearchWrapper = styled.div`
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   width: 100%;
+`
+
+const StyledTextField = styled(TextField)`
+   & .MuiOutlinedInput-root {
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      background-color: ${(props) => (props.$isDarkMode ? alpha('#ffffff', 0.05) : alpha('#000000', 0.03))};
+
+      & fieldset {
+         border-color: ${(props) => (props.$isDarkMode ? alpha('#ffffff', 0.1) : alpha('#000000', 0.1))};
+      }
+
+      &:hover fieldset {
+         border-color: ${(props) => (props.$isDarkMode ? alpha('#ffffff', 0.2) : alpha('#000000', 0.2))};
+      }
+
+      &.Mui-focused fieldset {
+         border-color: ${(props) => (props.$isDarkMode ? '#4F378B' : '#7DFB8C')};
+      }
+   }
+
+   & .MuiInputBase-input {
+      color: ${(props) => (props.$isDarkMode ? '#ffffff' : '#000000')};
+      &::placeholder {
+         color: ${(props) => (props.$isDarkMode ? alpha('#ffffff', 0.5) : alpha('#000000', 0.5))};
+      }
+   }
+`
+
+const SearchButton = styled(Button)`
+   min-width: 50px !important;
+   height: 50px !important;
+   border-radius: 12px !important;
+   background-color: ${(props) => (props.$isDarkMode ? '#4F378B' : '#7DFB8C')} !important;
+   transition: all 0.3s ease !important;
+   box-shadow: 0 4px 12px ${(props) => (props.$isDarkMode ? 'rgba(79, 55, 139, 0.2)' : 'rgba(125, 251, 140, 0.2)')} !important;
+
+   &:hover {
+      transform: translateY(-2px);
+      background-color: ${(props) => (props.$isDarkMode ? '#5F479B' : '#8DFB9C')} !important;
+      box-shadow: 0 6px 16px ${(props) => (props.$isDarkMode ? 'rgba(79, 55, 139, 0.3)' : 'rgba(125, 251, 140, 0.3)')} !important;
+   }
+`
+
+const ErrorMessage = styled.p`
+   color: #ff6b6b;
+   margin-top: 10px;
+   font-size: 0.9rem;
+   animation: shake 0.5s ease-in-out;
+
+   @keyframes shake {
+      0%,
+      100% {
+         transform: translateX(0);
+      }
+      25% {
+         transform: translateX(-5px);
+      }
+      75% {
+         transform: translateX(5px);
+      }
+   }
+`
+
+const CompletionMessage = styled.div`
+   text-align: center;
+   margin-top: 30px;
+   animation: fadeInUp 0.5s ease-out;
+
+   @keyframes fadeInUp {
+      from {
+         opacity: 0;
+         transform: translateY(20px);
+      }
+      to {
+         opacity: 1;
+         transform: translateY(0);
+      }
+   }
+
+   h2 {
+      margin-bottom: 20px;
+      color: ${(props) => (props.$isDarkMode ? '#ffffff' : '#000000')};
+   }
+`
+
 function SearchBanner() {
    const [searchValue, setSearchValue] = useRecoilState(searchValueState)
    const [isSearchVisible, setIsSearchVisible] = useState(true)
-   const [isSearchCompleted, setIsSearchCompleted] = useState(false) // 검색 완료 여부
-   const [errorMessage, setErrorMessage] = useState('') // 입력하지 않았을 때 에러 메세지
-
+   const [isSearchCompleted, setIsSearchCompleted] = useState(false)
+   const [errorMessage, setErrorMessage] = useState('')
    const { isDarkMode } = useContext(ThemeContext)
+   const dispatch = useDispatch()
 
-   // 로컬 스토리지에 저장된 검색어 불러오기
-   useEffect(() => {
-      // 페이지 새로고침 여부 확인
-      const pageAccessedByReload = window.performance
-         .getEntriesByType('navigation')
-         .map((nav) => nav.type)
-         .includes('reload')
+   const handleSearchInput = (e) => {
+      setSearchValue(e.target.value)
+      setErrorMessage('')
+   }
 
-      if (pageAccessedByReload) {
-         // 새로고침인 경우 로컬 스토리지 값 삭제
-         localStorage.removeItem('searchValue')
-         setSearchValue('')
-      } else {
-         // 새로고침이 아닌 경우 (일반 네비게이션) 로컬 스토리지 값 불러오기, 다른 컴포넌트 이동 시 검색어 유지
-         const storedValue = localStorage.getItem('searchValue')
-         if (storedValue) {
-            setSearchValue(storedValue)
-         }
-      }
-   }, [setSearchValue])
-
-   // 검색어 입력 처리
-   const handleSearchInput = useCallback(
-      (e) => {
-         setSearchValue(e.target.value)
-         setErrorMessage('') // 입력하지 않았을 때 에러 메세지 초기화
-      },
-      [setSearchValue]
-   )
-
-   // 검색 실행 및 검색창 숨기기
    const handleSearch = useCallback(() => {
       if (!searchValue) {
          setErrorMessage('검색어를 입력해주세요.')
          return
       }
-      // 로컬 스토리지에 값 저장
-      localStorage.setItem('searchValue', searchValue)
 
-      // 검색어를 저장하고 검색창 숨기기
+      dispatch(setReduxSearchValue(searchValue))
       setIsSearchVisible(false)
-      setIsSearchCompleted(true) // 검색 완료 상태 업데이트
-   }, [searchValue])
+      setIsSearchCompleted(true)
+   }, [searchValue, dispatch])
 
-   // 재검색 처리 : 입력창을 보이게 하기, 검색어도 초기화
+   // 재검색 시 모든 상태 초기화
    const handleRetrySearch = useCallback(() => {
-      setSearchValue('')
       setIsSearchVisible(true)
       setIsSearchCompleted(false)
       setErrorMessage('')
-   }, [])
+      setSearchValue('') // Recoil 상태 초기화
+      dispatch(setReduxSearchValue('')) // Redux 상태 초기화
+   }, [dispatch, setSearchValue])
 
-   // Enter 키 입력 처리
    const handleKeyPress = useCallback(
       (e) => {
          if (e.key === 'Enter') {
@@ -81,49 +158,39 @@ function SearchBanner() {
    )
 
    return (
-      <div style={{ marginTop: '50px', marginBottom: '20px' }}>
-         {/* 검색창이 보일 때만 */}
+      <SearchContainer>
          {isSearchVisible && (
             <div>
-               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <TextField
+               <SearchWrapper>
+                  <StyledTextField
                      fullWidth
-                     id="outlined-basic"
                      variant="outlined"
-                     style={{ width: 500, backgroundColor: 'rgba(255, 255, 255, 0.3)', border: '1px solid #e0e0e0', borderRadius: '5px' }}
-                     placeholder="원하시는 지역을 검색하세요" // 기본 텍스트 설정
+                     placeholder="원하시는 지역을 검색하세요"
                      onChange={handleSearchInput}
                      onKeyDown={handleKeyPress}
-                     value={searchValue || ''} // searchValue가 없으면 빈 문자열로 설정
-                  />
-                  <Button
-                     variant="contained"
-                     style={{
-                        minWidth: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        backgroundColor: isDarkMode ? '#4F378B' : '#7DFB8C',
+                     value={searchValue || ''} // 빈 문자열 fallback 추가
+                     $isDarkMode={isDarkMode}
+                     sx={{
+                        '& .MuiInputBase-input': { height: 20 },
                      }}
-                     onClick={handleSearch}
-                  >
-                     &gt;
-                  </Button>
-               </div>
-               {/* 오류 메시지 출력 */}
-               {errorMessage && <p style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>}
+                  />
+                  <SearchButton variant="contained" onClick={handleSearch} $isDarkMode={isDarkMode}>
+                     <SearchIcon />
+                  </SearchButton>
+               </SearchWrapper>
+               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             </div>
          )}
 
-         {/* 검색 완료 후 재검색 버튼 */}
          {isSearchCompleted && (
-            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-               <h2>지역 검색어 저장이 완료 되었습니다!</h2>
-               <Button variant="contained" style={{ backgroundColor: isDarkMode ? '#4F378B' : '#7DFB8C', marginTop: '10px', width: '100px', height: '40px', display: 'flex', justifyContent: 'center' }} onClick={handleRetrySearch}>
+            <CompletionMessage $isDarkMode={isDarkMode}>
+               <h2>지역 검색어 저장이 완료되었습니다!</h2>
+               <SearchButton variant="contained" onClick={handleRetrySearch} $isDarkMode={isDarkMode} style={{ width: 120, color: isDarkMode ? '#fff' : '#000' }}>
                   재검색
-               </Button>
-            </div>
+               </SearchButton>
+            </CompletionMessage>
          )}
-      </div>
+      </SearchContainer>
    )
 }
 
