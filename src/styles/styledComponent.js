@@ -13,7 +13,10 @@ export const Content = styled.div`
    padding: 20px;
    display: flex;
    flex-direction: column;
-   margin-top: 57px;
+   margin-top: 200px;
+   align-items: center;
+   width: 100%;
+   max-width: 1200px;
 `
 
 export const Title = styled.div`
@@ -21,9 +24,8 @@ export const Title = styled.div`
    font-weight: bold;
    background: linear-gradient(to right, #05c9ff, #09ff36);
    -webkit-background-clip: text;
-   color: transparent;
-   padding: 20px;
-   margin: 0;
-   text-transform: uppercase;
-   letter-spacing: 2px;
+   -webkit-text-fill-color: transparent;
+   margin-bottom: 30px;
+   text-align: center;
+   word-break: keep-all;
 `
