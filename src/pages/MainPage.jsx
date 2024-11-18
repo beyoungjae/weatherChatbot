@@ -15,7 +15,8 @@ function MainPage() {
    const user = useSelector((state) => state.auth.user) // 유저 정보 가져오기
    const navigate = useNavigate()
 
-   const handleShowWeather = () => {
+   // 날씨 요약 확인하기 버튼 클릭 시 실행되는 함수
+   const handleShowWeather = useCallback(() => {
       // 유저 정보가 없으면 로그인 페이지로 이동
       if (!user) {
          alert('로그인이 필요한 서비스입니다.')
@@ -28,9 +29,10 @@ function MainPage() {
          return
       }
       dispatch(showCard()) // 날씨 요약 상태 변경
-   }
+   }, [user, navigate, reduxSearchValue, dispatch])
 
-   const handleChatBot = () => {
+   // 챗봇이랑 대화하기 버튼 클릭 시 실행되는 함수
+   const handleChatBot = useCallback(() => {
       // 유저 정보가 없으면 로그인 페이지로 이동
       if (!user) {
          alert('로그인이 필요한 서비스입니다.')
@@ -38,7 +40,7 @@ function MainPage() {
          return
       }
       navigate('/chatbot') // 챗봇 페이지로 이동
-   }
+   }, [user, navigate])
 
    return (
       <Wrap>

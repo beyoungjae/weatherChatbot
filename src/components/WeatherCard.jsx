@@ -173,12 +173,12 @@ function WeatherCard() {
    }, [searchValue])
 
    // 카드 닫기
-   const handleClose = () => {
+   const handleClose = useCallback(() => {
       setIsClosing(true)
       setTimeout(() => {
          dispatch(hideCard())
       }, 600)
-   }
+   }, [dispatch])
 
    // 로딩 중일 때 로딩 아이콘 반환
    if (loading) {

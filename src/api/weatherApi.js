@@ -1,60 +1,75 @@
 import axios from 'axios'
 
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/'
+const BASE_URL = 'https://api.openweathermap.org/data/2.5'
 const API_KEY = '9510747a3798c51b80ba48582bf7f809'
 
-// 도시 이름을 영어로 변환하는 매핑
+// 도시 이름을 영어로 변환하는 매핑 (전국 지역명을 영어로 매핑, 모든 지역을 매핑하기에는 너무 많아서 일부만 매핑)
 const cityNameMapping = {
    서울: 'Seoul',
-   인천: 'Incheon',
    부산: 'Busan',
+   인천: 'Incheon',
    대구: 'Daegu',
    대전: 'Daejeon',
    광주: 'Gwangju',
    울산: 'Ulsan',
    세종: 'Sejong',
+   수원: 'Suwon',
+   용인: 'Yongin',
+   고양: 'Goyang',
+   창원: 'Changwon',
+   성남: 'Seongnam',
+   청주: 'Cheongju',
    제주: 'Jeju',
-   강릉: 'Gangneung',
-   춘천: 'Chuncheon',
-   원주: 'Wonju',
-   속초: 'Sokcho',
-   포항: 'Pohang',
-   경주: 'Gyeongju',
+   전주: 'Jeonju',
+   천안: 'Cheonan',
+   안산: 'Ansan',
+   안양: 'Anyang',
 }
 
-// api 호출하기 axios 객체 생성
+// API 호출을 위한 axios 인스턴스 생성
 const weatherApi = axios.create({
-   baseURL: BASE_URL,
+   baseURL: BASE_URL, // API URL을 변수에 담아서 사용
    params: {
-      appid: API_KEY,
-      units: 'metric',
-      lang: 'kr',
+      appid: API_KEY, // API KEY를 변수에 담아서 사용
+      units: 'metric', // 섭씨 온도 사용
+      lang: 'kr', // 한국어 응답
    },
 })
 
-// 공통 API 호출 함수
-const fetchFromApi = async (url, params = {}) => {
+// 현재 날씨 조회
+export const getCurrentWeather = async (city) => {
    try {
-      const response = await weatherApi.get(url, { params })
-      return response
+      // 도시명 처리
+      const searchCity = cityNameMapping[city] || city
+
+      // API 호출
+      const response = await weatherApi.get('/weather', {
+         params: {
+            q: `${searchCity},KR`,
+         },
+      })
+
+      return response.data // 응답 데이터 반환
    } catch (error) {
-      console.log(`API 요청 오류 : ${error.message}`)
+      console.error('날씨 정보 조회 실패:', error)
       throw error
    }
 }
 
-// 현재 날씨 가져오기
-export const getCurrentWeather = (city) => {
-   // 한글 도시명을 영어로 변환하거나 국가 코드 추가
-   const searchCity = cityNameMapping[city] || `${city},KR`
-   return fetchFromApi('/weather', { q: searchCity })
-}
+// 5일 예보 조회
+export const getFiveDayWeather = async (city) => {
+   try {
+      const searchCity = cityNameMapping[city] || city // 도시명 처리
 
-// 5일 날씨 예보 가져오기
-export const getFiveDayWeather = (city) => {
-   const searchCity = cityNameMapping[city] || `${city},KR`
-   return fetchFromApi('/forecast', { q: searchCity, cnt: 40 }) // API 호출
-      .then((response) => {
-         return response.data
+      const response = await weatherApi.get('/forecast', {
+         params: {
+            q: `${searchCity},KR`,
+         },
       })
+
+      return response.data // 응답 데이터 반환
+   } catch (error) {
+      console.error('예보 정보 조회 실패:', error)
+      throw error
+   }
 }
