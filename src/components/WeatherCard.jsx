@@ -7,6 +7,7 @@ import { hideCard } from '../features/weather/weatherSlice'
 import { getCurrentWeather } from '../api/weatherApi'
 import CircularProgress from '@mui/material/CircularProgress'
 
+// 스타일 및 애니메이션은 ai 참고
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -41,11 +42,11 @@ const slideIn = keyframes`
 `
 
 const Card = styled.div`
-   background: ${(props) => (props.isDarkMode ? '#1a1a1a' : 'white')};
-   color: ${(props) => (props.isDarkMode ? 'white' : 'black')};
+   background: ${(props) => (props.$isDarkMode ? '#1a1a1a' : 'white')};
+   color: ${(props) => (props.$isDarkMode ? 'white' : 'black')};
    border-radius: 20px;
    padding: 35px;
-   box-shadow: ${(props) => (props.isDarkMode ? '0 8px 32px rgba(0, 0, 0, 0.3)' : '0 8px 32px rgba(0, 0, 0, 0.1)')};
+   box-shadow: ${(props) => (props.$isDarkMode ? '0 8px 32px rgba(0, 0, 0, 0.3)' : '0 8px 32px rgba(0, 0, 0, 0.1)')};
    width: 100%;
    max-width: 500px;
    transition: all 0.4s ease;
@@ -57,13 +58,13 @@ const Card = styled.div`
    flex-direction: column;
    align-items: center;
    gap: 25px;
-   animation: ${(props) => (props.isClosing ? fadeOut : fadeIn)} 0.6s ease-out;
-   visibility: ${(props) => (props.isClosing ? 'hidden' : 'visible')};
+   animation: ${(props) => (props.$isClosing ? fadeOut : fadeIn)} 0.6s ease-out;
+   visibility: ${(props) => (props.$isClosing ? 'hidden' : 'visible')};
    backdrop-filter: blur(8px);
-   border: 1px solid ${(props) => (props.isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')};
+   border: 1px solid ${(props) => (props.$isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')};
 
    &:hover {
-      box-shadow: ${(props) => (props.isDarkMode ? '0 12px 48px rgba(0, 0, 0, 0.4)' : '0 12px 48px rgba(0, 0, 0, 0.15)')};
+      box-shadow: ${(props) => (props.$isDarkMode ? '0 12px 48px rgba(0, 0, 0, 0.4)' : '0 12px 48px rgba(0, 0, 0, 0.15)')};
    }
 `
 
@@ -72,7 +73,7 @@ const WeatherInfo = styled.div`
    align-items: center;
    gap: 30px;
    padding: 25px;
-   background: ${(props) => (props.isDarkMode ? '#2d2d2d' : '#f8f9fa')};
+   background: ${(props) => (props.$isDarkMode ? '#2d2d2d' : '#f8f9fa')};
    border-radius: 16px;
    width: 100%;
    animation: ${slideIn} 0.6s ease-out;
@@ -80,7 +81,7 @@ const WeatherInfo = styled.div`
 
    &:hover {
       transform: translateY(-5px);
-      box-shadow: ${(props) => (props.isDarkMode ? '0 8px 24px rgba(0, 0, 0, 0.3)' : '0 8px 24px rgba(0, 0, 0, 0.1)')};
+      box-shadow: ${(props) => (props.$isDarkMode ? '0 8px 24px rgba(0, 0, 0, 0.3)' : '0 8px 24px rgba(0, 0, 0, 0.1)')};
    }
 `
 
@@ -88,7 +89,7 @@ const Title = styled.h2`
    font-size: 2.2rem;
    font-weight: 600;
    margin: 0;
-   background: ${(props) => (props.isDarkMode ? 'linear-gradient(135deg, #e0e0e0, #ffffff)' : 'linear-gradient(135deg, #2d2d2d, #000000)')};
+   background: ${(props) => (props.$isDarkMode ? 'linear-gradient(135deg, #e0e0e0, #ffffff)' : 'linear-gradient(135deg, #2d2d2d, #000000)')};
    -webkit-background-clip: text;
    -webkit-text-fill-color: transparent;
    animation: ${slideIn} 0.4s ease-out;
@@ -98,7 +99,7 @@ const Temperature = styled.div`
    font-size: 3rem;
    font-weight: bold;
    margin-bottom: 10px;
-   background: ${(props) => (props.isDarkMode ? 'linear-gradient(135deg, #4F378B, #FFD8E4)' : 'linear-gradient(135deg, #05c9ff, #09ff36)')};
+   background: ${(props) => (props.$isDarkMode ? 'linear-gradient(135deg, #4F378B, #FFD8E4)' : 'linear-gradient(135deg, #05c9ff, #09ff36)')};
    -webkit-background-clip: text;
    -webkit-text-fill-color: transparent;
 `
@@ -112,12 +113,9 @@ const WeatherDetails = styled.div`
 `
 
 const WeatherIcon = styled.img`
-   width: 100px;
-   height: 100px;
    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
    animation: ${slideIn} 0.6s ease-out;
    transition: all 0.3s ease;
-
    &:hover {
       transform: scale(1.1);
    }
@@ -139,14 +137,22 @@ const StyledButton = styled(Button)`
 `
 
 function WeatherCard() {
+   // 검색 값 가져오기
    const searchValue = useSelector((state) => state.search.searchValue)
+   // 테마 상태 가져오기
    const { isDarkMode } = useContext(ThemeContext)
+   // 디스패치 함수 가져오기
    const dispatch = useDispatch()
+   // 날씨 상태 가져오기
    const [weather, setWeather] = useState(null)
+   // 로딩 상태 가져오기
    const [loading, setLoading] = useState(true)
+   // 에러 상태 가져오기
    const [error, setError] = useState(null)
+   // 닫기 상태 가져오기
    const [isClosing, setIsClosing] = useState(false)
 
+   // 검색 값이 변경될 때마다 날씨 정보 가져오기
    useEffect(() => {
       const fetchWeather = async () => {
          try {
@@ -166,6 +172,7 @@ function WeatherCard() {
       }
    }, [searchValue])
 
+   // 카드 닫기
    const handleClose = () => {
       setIsClosing(true)
       setTimeout(() => {
@@ -173,17 +180,19 @@ function WeatherCard() {
       }, 600)
    }
 
+   // 로딩 중일 때 로딩 아이콘 반환
    if (loading) {
       return (
-         <Card isDarkMode={isDarkMode}>
+         <Card $isDarkMode={isDarkMode}>
             <CircularProgress color={isDarkMode ? 'secondary' : 'primary'} />
          </Card>
       )
    }
 
+   // 에러 상태일 때 에러 메시지 반환
    if (error) {
       return (
-         <Card isDarkMode={isDarkMode}>
+         <Card $isDarkMode={isDarkMode}>
             <div>{error}</div>
             <Button
                variant="contained"
@@ -198,15 +207,16 @@ function WeatherCard() {
       )
    }
 
+   // 날씨 정보가 있을 때 날씨 카드 반환
    return (
-      <Card isDarkMode={isDarkMode} isClosing={isClosing}>
-         <Title isDarkMode={isDarkMode}>{searchValue} 날씨</Title>
-         <WeatherInfo isDarkMode={isDarkMode}>
+      <Card $isDarkMode={isDarkMode} $isClosing={isClosing}>
+         <Title $isDarkMode={isDarkMode}>{searchValue} 날씨</Title>
+         <WeatherInfo $isDarkMode={isDarkMode}>
             <div>
                <WeatherIcon src={`https://openweathermap.org/img/wn/${weather?.weather[0].icon}@4x.png`} alt="weather icon" />
             </div>
             <WeatherDetails>
-               <Temperature isDarkMode={isDarkMode}>{Math.round(weather?.main.temp)}°C</Temperature>
+               <Temperature $isDarkMode={isDarkMode}>{Math.round(weather?.main.temp)}°C</Temperature>
                <div>{weather?.weather[0].description}</div>
                <div>체감온도: {Math.round(weather?.main.feels_like)}°C</div>
                <div>습도: {weather?.main.humidity}%</div>

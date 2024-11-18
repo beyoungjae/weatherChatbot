@@ -6,6 +6,9 @@ import styled, { keyframes } from 'styled-components'
 import { ThemeContext } from './ThemeContext'
 import { useContext } from 'react'
 import './css/Menu.css'
+import HomeIcon from '@mui/icons-material/Home'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../features/auth/authSlice'
 
 // 아이콘 슬라이드 애니메이션
 const slideRight = keyframes`
@@ -92,6 +95,15 @@ const LeftLogo = styled.div`
    margin-left: 20px;
 `
 
+const CenterMenu = styled.div`
+   margin-right: 1800px;
+`
+
+const StyledMainNavLink = styled(NavLink)`
+   color: ${(props) => (props.$isDarkMode ? '#fff' : '#333')};
+   text-decoration: none;
+`
+
 const RightMenu = styled.div`
    display: flex;
    align-items: center;
@@ -128,10 +140,21 @@ const StyledNavLink = styled(NavLink)`
 `
 
 function Menu() {
+   // 테마 상태 가져오기
    const { isDarkMode, setIsDarkMode } = useContext(ThemeContext)
+   // 디스패치 함수 가져오기
+   const dispatch = useDispatch()
+   // 유저 정보 가져오기
+   const user = useSelector((state) => state.auth.user)
 
    const handleModeChange = () => {
+      // 다크 모드 상태 변경
       setIsDarkMode(!isDarkMode)
+   }
+
+   const handleLogout = () => {
+      // 로그아웃 요청
+      dispatch(logout())
    }
 
    return (
@@ -141,6 +164,12 @@ function Menu() {
                <IconWrapper $isDarkMode={isDarkMode}>{isDarkMode ? <DarkModeIcon /> : <LightModeIcon />}</IconWrapper>
             </LeftLogo>
 
+            <CenterMenu>
+               <StyledMainNavLink to="/" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
+                  <HomeIcon sx={{ fontSize: '2.2rem !important', fontWeight: '600 !important' }} />
+               </StyledMainNavLink>
+            </CenterMenu>
+
             <RightMenu>
                <StyledButton $isDarkMode={isDarkMode} onClick={handleModeChange}>
                   <div className="text-wrapper">
@@ -149,17 +178,27 @@ function Menu() {
                   </div>
                </StyledButton>
 
-               <StyledNavLink to="/chatbot" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
-                  <ForumIcon /> 챗봇
-               </StyledNavLink>
+               {user ? (
+                  // 유저 정보가 있으면 챗봇 페이지로 이동
+                  <>
+                     <StyledNavLink to="/chatbot" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
+                        <ForumIcon /> 챗봇
+                     </StyledNavLink>
 
-               <StyledNavLink to="/weather" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
-                  날씨 정보
-               </StyledNavLink>
+                     <StyledNavLink to="/fivedays" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
+                        날씨 정보
+                     </StyledNavLink>
 
-               <StyledNavLink to="/login" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
-                  로그인
-               </StyledNavLink>
+                     <StyledButton $isDarkMode={isDarkMode} onClick={handleLogout}>
+                        로그아웃
+                     </StyledButton>
+                  </>
+               ) : (
+                  // 유저 정보가 없으면 로그인 페이지로 이동
+                  <StyledNavLink to="/login" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
+                     로그인
+                  </StyledNavLink>
+               )}
             </RightMenu>
          </Nav>
       </Header>

@@ -20,7 +20,6 @@ const cityNameMapping = {
    속초: 'Sokcho',
    포항: 'Pohang',
    경주: 'Gyeongju',
-   거제: 'Geoje',
 }
 
 // api 호출하기 axios 객체 생성
@@ -54,5 +53,8 @@ export const getCurrentWeather = (city) => {
 // 5일 날씨 예보 가져오기
 export const getFiveDayWeather = (city) => {
    const searchCity = cityNameMapping[city] || `${city},KR`
-   return fetchFromApi('/forecast/daily', { q: searchCity })
+   return fetchFromApi('/forecast', { q: searchCity, cnt: 40 }) // API 호출
+      .then((response) => {
+         return response.data
+      })
 }

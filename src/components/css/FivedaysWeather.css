@@ -1,0 +1,57 @@
+.weather-container {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   grid-template-areas:
+      'current style'
+      'forecast forecast';
+   gap: 20px;
+   padding: 20px;
+   max-width: 1200px;
+   margin: 0 auto;
+}
+
+.current-weather {
+   grid-area: current;
+}
+
+.style-recommend {
+   grid-area: style;
+}
+
+.fivedays-weather {
+   grid-area: forecast;
+}
+
+@media (max-width: 768px) {
+   .weather-container {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+         'current'
+         'style'
+         'forecast';
+   }
+}
+
+.forecast-item {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 10px;
+   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.forecast-item:last-child {
+   border-bottom: none;
+}
+
+.forecast-date {
+   min-width: 100px;
+}
+
+.forecast-temp {
+   font-weight: bold;
+}
+
+.forecast-desc {
+   min-width: 120px;
+}

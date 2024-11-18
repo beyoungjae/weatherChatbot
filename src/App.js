@@ -1,25 +1,25 @@
+import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import MainPage from './pages/MainPage'
+import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
-import { ThemeProvider } from 'styled-components'
-import { ThemeContext } from './components/ThemeContext'
-import { lightTheme, darkTheme } from './styles/styledComponent'
-import { useContext } from 'react'
-import { store } from './store/store'
+import WeatherPage from './pages/WeatherPage'
+import { ThemeProvider } from './components/ThemeContext'
 import { Provider } from 'react-redux'
+import { store } from './store/store'
 
-function App() {
-   const { isDarkMode } = useContext(ThemeContext)
-
+const App = () => {
    return (
-      <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-         <Provider store={store}>
+      <Provider store={store}>
+         <ThemeProvider>
             <Routes>
                <Route path="/" element={<MainPage />} />
+               <Route path="/fivedays" element={<WeatherPage />} />
+               <Route path="/login" element={<LoginPage />} />
                <Route path="*" element={<NotFoundPage />} />
             </Routes>
-         </Provider>
-      </ThemeProvider>
+         </ThemeProvider>
+      </Provider>
    )
 }
 

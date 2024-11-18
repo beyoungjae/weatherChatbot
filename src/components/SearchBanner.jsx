@@ -116,18 +116,26 @@ const CompletionMessage = styled.div`
 `
 
 function SearchBanner() {
+   // 검색 값 가져오기
    const [searchValue, setSearchValue] = useRecoilState(searchValueState)
+   // 검색 상태 가져오기
    const [isSearchVisible, setIsSearchVisible] = useState(true)
+   // 검색 완료 상태 가져오기
    const [isSearchCompleted, setIsSearchCompleted] = useState(false)
+   // 에러 메시지 가져오기
    const [errorMessage, setErrorMessage] = useState('')
+   // 테마 상태 가져오기
    const { isDarkMode } = useContext(ThemeContext)
+   // 디스패치 함수 가져오기
    const dispatch = useDispatch()
 
+   // 검색 값이 변경될 때마다 검색 값 저장
    const handleSearchInput = (e) => {
       setSearchValue(e.target.value)
       setErrorMessage('')
    }
 
+   // 검색 버튼 클릭 시 검색 값 저장
    const handleSearch = useCallback(() => {
       if (!searchValue) {
          setErrorMessage('검색어를 입력해주세요.')
@@ -143,11 +151,12 @@ function SearchBanner() {
    const handleRetrySearch = useCallback(() => {
       setIsSearchVisible(true)
       setIsSearchCompleted(false)
-      setErrorMessage('')
+      setErrorMessage('') // 에러 메시지 초기화
       setSearchValue('') // Recoil 상태 초기화
       dispatch(setReduxSearchValue('')) // Redux 상태 초기화
    }, [dispatch, setSearchValue])
 
+   // 엔터 키 누르면 검색 실행
    const handleKeyPress = useCallback(
       (e) => {
          if (e.key === 'Enter') {
@@ -168,7 +177,7 @@ function SearchBanner() {
                      placeholder="원하시는 지역을 검색하세요"
                      onChange={handleSearchInput}
                      onKeyDown={handleKeyPress}
-                     value={searchValue || ''} // 빈 문자열 fallback 추가
+                     value={searchValue || ''} // 빈 문자열 추가
                      $isDarkMode={isDarkMode}
                      sx={{
                         '& .MuiInputBase-input': { height: 20 },

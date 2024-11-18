@@ -31,7 +31,7 @@ export const lightTheme = {
    gradient: 'linear-gradient(to right, #05c9ff, #09ff36)',
    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
    buttonHover: '#f0f0f0',
-   backgroundColor: '#60E47D',
+   backgroundColor: '#7DFB8C',
 }
 
 export const darkTheme = {

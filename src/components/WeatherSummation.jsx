@@ -32,13 +32,17 @@ const Container = styled.div`
 `
 
 function WeatherSummation() {
+   // 테마 상태 가져오기
    const { isDarkMode } = useContext(ThemeContext)
+   // 검색 값 가져오기
    const searchValue = useSelector((state) => state.search.searchValue)
 
+   // 검색 값이 없으면 null 반환
    if (!searchValue) {
       return null
    }
 
+   // 검색 값이 있으면 날씨 카드 반환
    return (
       <Container $isDarkMode={isDarkMode}>
          <WeatherCard />
