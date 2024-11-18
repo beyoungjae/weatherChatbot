@@ -22,6 +22,38 @@ const slideIn = keyframes`
   }
 `
 
+const float = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`
+
+const MainTitle = styled.div`
+   font-size: 3.5rem;
+   font-weight: bold;
+   background: ${(props) => props.theme.gradient};
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   margin-bottom: 40px;
+   text-align: center;
+   word-break: keep-all;
+   animation: ${float} 3s ease-in-out infinite;
+
+   @media (max-width: 768px) {
+      font-size: 2.5rem;
+   }
+
+   @media (max-width: 480px) {
+      font-size: 2rem;
+   }
+`
+
 const Card = styled.div`
    background: ${(props) => (props.$isDarkMode ? '#1a1a1a' : 'white')};
    color: ${(props) => (props.$isDarkMode ? 'white' : 'black')};
@@ -405,7 +437,7 @@ function FivedaysWeather() {
    }, [searchValue])
 
    // filterDailyForecasts 함수를 useMemo로 최적화
-   const filterDailyForecasts = React.useMemo(
+   const filterDailyForecasts = useMemo(
       () => (forecasts) => {
          if (!forecasts || !Array.isArray(forecasts)) {
             return [] // 예외 처리
@@ -478,6 +510,7 @@ function FivedaysWeather() {
 
    return (
       <WeatherContainer>
+         <MainTitle $isDarkMode={isDarkMode}>{searchValue} 날씨 정보</MainTitle>
          <Card $isDarkMode={isDarkMode} className="current-weather">
             <Title $isDarkMode={isDarkMode}>{searchValue} 현재 날씨</Title>
             <WeatherInfo $isDarkMode={isDarkMode}>

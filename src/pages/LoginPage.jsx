@@ -11,10 +11,42 @@ import Menu from '../components/Menu'
 import Footer from '../components/Footer'
 
 // 스타일 컴포넌트 가져오기
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import TextField from '@mui/material/TextField'
 import { alpha } from '@mui/material/styles'
 import { Button } from '@mui/material'
+
+const float = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`
+
+const Title = styled.div`
+   font-size: 3.5rem;
+   font-weight: bold;
+   background: ${(props) => props.theme.gradient};
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   margin-bottom: 40px;
+   text-align: center;
+   word-break: keep-all;
+   animation: ${float} 3s ease-in-out infinite;
+
+   @media (max-width: 768px) {
+      font-size: 2.5rem;
+   }
+
+   @media (max-width: 480px) {
+      font-size: 2rem;
+   }
+`
 
 const LoginContainer = styled.div`
    max-width: 400px;
@@ -122,6 +154,7 @@ function LoginPage() {
          <Menu />
          <div style={{ paddingTop: '200px' }}>
             <LoginContainer>
+               <Title $isDarkMode={isDarkMode}>반갑습니다.</Title>
                <h2 style={{ textAlign: 'center', padding: 30 }}>로그인</h2>
                <Form onSubmit={handleSubmit}>
                   <StyledTextField
