@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { showCard } from '../features/weather/weatherSlice'
 import WeatherSummation from '../components/WeatherSummation'
 import { useNavigate } from 'react-router-dom'
-
+import { useCallback } from 'react'
 function MainPage() {
    // 리덕스 슬라이스 가져오기
    const dispatch = useDispatch()

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import styled, { keyframes } from 'styled-components'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useCallback } from 'react'
 import { ThemeContext } from './ThemeContext'
 import { Button } from '@mui/material'
 import { hideCard } from '../features/weather/weatherSlice'
