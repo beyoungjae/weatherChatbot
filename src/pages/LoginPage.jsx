@@ -2,7 +2,7 @@
 import { ThemeContext } from '../components/ThemeContext'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 // 리덕스 슬라이스 가져오기
 import { loginUser, clearError } from '../features/auth/authSlice'
 
@@ -145,10 +145,13 @@ function LoginPage() {
       }
    }
 
-   const handleChange = (e) => {
-      const { name, value } = e.target
-      setCredentials({ ...credentials, [name]: value }) // 로그인 정보 상태 변경
-   }
+   const handleChange = useCallback(
+      (e) => {
+         const { name, value } = e.target
+         setCredentials({ ...credentials, [name]: value }) // 로그인 정보 상태 변경
+      },
+      [credentials]
+   )
    return (
       <>
          <Menu />

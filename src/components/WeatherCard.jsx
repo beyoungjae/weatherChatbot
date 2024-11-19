@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import styled, { keyframes } from 'styled-components'
-import { useContext, useEffect, useState, useCallback } from 'react'
+import { useContext, useEffect, useCallback } from 'react'
 import { ThemeContext } from './ThemeContext'
 import { Button } from '@mui/material'
 import { hideCard } from '../features/weather/weatherSlice'
@@ -58,8 +58,9 @@ const Card = styled.div`
    flex-direction: column;
    align-items: center;
    gap: 25px;
-   animation: ${(props) => (props.$isClosing ? fadeOut : fadeIn)} 0.6s ease-out;
-   visibility: ${(props) => (props.$isClosing ? 'hidden' : 'visible')};
+   animation: ${(props) => (props.$isClosing ? fadeOut : fadeIn)} 0.5s ease-in-out forwards;
+   opacity: ${(props) => (props.$isClosing ? 0 : 1)};
+   pointer-events: ${(props) => (props.$isClosing ? 'none' : 'auto')};
    backdrop-filter: blur(8px);
    border: 1px solid ${(props) => (props.$isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')};
 
@@ -144,41 +145,33 @@ function WeatherCard() {
    // 디스패치 함수 가져오기
    const dispatch = useDispatch()
    // 날씨 상태 가져오기
-   const [weather, setWeather] = useState(null)
-   // 로딩 상태 가져오기
-   const [loading, setLoading] = useState(true)
-   // 에러 상태 가져오기
-   const [error, setError] = useState(null)
-   // 닫기 상태 가져오기
-   const [isClosing, setIsClosing] = useState(false)
+   const weatherData = useSelector((state) => state.weather)
+   // 로딩, 에러, 닫기 상태 가져오기
+   const { loading, error, isClosing } = weatherData
 
    // 검색 값이 변경될 때마다 날씨 정보 가져오기
    useEffect(() => {
       const fetchWeather = async () => {
          try {
-            setLoading(true)
             const data = await getCurrentWeather(searchValue)
-            setWeather(data)
-            setError(null)
+            dispatch({ type: 'weather/weather', payload: data })
          } catch (err) {
-            console.log('에러 :', err)
-            setError('날씨 정보를 불러오는데 실패했습니다.')
-         } finally {
-            setLoading(false)
+            console.log('에러:', err)
+            dispatch({ type: 'weather/error', payload: '날씨 정보를 불러오는데 실패했습니다.' })
          }
       }
 
       if (searchValue) {
          fetchWeather()
       }
-   }, [searchValue])
+   }, [searchValue, dispatch])
 
    // 카드 닫기
    const handleClose = useCallback(() => {
-      setIsClosing(true)
+      dispatch({ type: 'weather/isClosing', payload: true })
       setTimeout(() => {
          dispatch(hideCard())
-      }, 600)
+      }, 100)
    }, [dispatch])
 
    // 로딩 중일 때 로딩 아이콘 반환
@@ -214,13 +207,13 @@ function WeatherCard() {
          <Title $isDarkMode={isDarkMode}>{searchValue} 날씨</Title>
          <WeatherInfo $isDarkMode={isDarkMode}>
             <div>
-               <WeatherIcon src={`https://openweathermap.org/img/wn/${weather?.weather[0].icon}@4x.png`} alt="weather icon" />
+               <WeatherIcon src={`https://openweathermap.org/img/wn/${weatherData.weather?.weather[0].icon}@4x.png`} alt="weather icon" />
             </div>
             <WeatherDetails>
-               <Temperature $isDarkMode={isDarkMode}>{Math.round(weather?.main.temp)}°C</Temperature>
-               <div>{weather?.weather[0].description}</div>
-               <div>체감온도: {Math.round(weather?.main.feels_like)}°C</div>
-               <div>습도: {weather?.main.humidity}%</div>
+               <Temperature $isDarkMode={isDarkMode}>{Math.round(weatherData.weather?.main.temp)}°C</Temperature>
+               <div>{weatherData.weather?.weather[0].description}</div>
+               <div>체감온도: {Math.round(weatherData.weather?.main.feels_like)}°C</div>
+               <div>습도: {weatherData.weather?.main.humidity}%</div>
             </WeatherDetails>
          </WeatherInfo>
          <StyledButton
