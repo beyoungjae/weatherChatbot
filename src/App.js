@@ -5,23 +5,19 @@ import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import WeatherPage from './pages/WeatherPage'
 import { ThemeProvider } from './components/ThemeContext'
-import { Provider } from 'react-redux'
-import { store } from './store/store'
 import ChatbotPage from './pages/ChatbotPage'
 
 const App = () => {
    return (
-      <Provider store={store}>
-         <ThemeProvider>
-            <Routes>
-               <Route path="/" element={<MainPage />} />
-               <Route path="/fivedays" element={<WeatherPage />} />
-               <Route path="/login" element={<LoginPage />} />
-               <Route path="/chatbot" element={<ChatbotPage />} />
-               <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-         </ThemeProvider>
-      </Provider>
+      <ThemeProvider>
+         <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/fivedays" element={<WeatherPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/chatbot" element={<ChatbotPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+         </Routes>
+      </ThemeProvider>
    )
 }
 
