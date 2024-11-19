@@ -157,10 +157,11 @@ function WeatherCard() {
       const fetchWeather = async () => {
          try {
             setLoading(true)
-            const response = await getCurrentWeather(searchValue)
-            setWeather(response.data)
+            const data = await getCurrentWeather(searchValue)
+            setWeather(data)
             setError(null)
          } catch (err) {
+            console.log('에러 :', err)
             setError('날씨 정보를 불러오는데 실패했습니다.')
          } finally {
             setLoading(false)

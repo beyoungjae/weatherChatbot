@@ -36,24 +36,27 @@ const weatherApi = axios.create({
    },
 })
 
-// 현재 날씨 조회
-export const getCurrentWeather = async (city) => {
+// 공통 API 호출 함수
+const fetchFromApi = async (url, params = {}) => {
    try {
-      // 도시명 처리
-      const searchCity = cityNameMapping[city] || city
+      const response = await weatherApi.get(url, { params })
 
-      // API 호출
-      const response = await weatherApi.get('/weather', {
-         params: {
-            q: `${searchCity},KR`,
-         },
-      })
-
-      return response.data // 응답 데이터 반환
+      return {
+         response,
+         data: response.data,
+      }
    } catch (error) {
-      console.error('날씨 정보 조회 실패:', error)
+      console.log(`API 요청 오류 : ${error.message}`)
       throw error
    }
+}
+
+// 현재 날씨 가져오기
+export const getCurrentWeather = async (city) => {
+   // 한글 도시명을 영어로 변환하거나 국가 코드 추가
+   const searchCity = cityNameMapping[city] || `${city},KR`
+   const { data } = await fetchFromApi('/weather', { q: searchCity })
+   return data
 }
 
 // 5일 예보 조회

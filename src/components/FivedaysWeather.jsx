@@ -421,8 +421,8 @@ function FivedaysWeather() {
       const fetchWeather = async () => {
          try {
             setLoading(true) // 로딩 상태 설정
-            const response = await getCurrentWeather(searchValue) // 현재 날씨 가져오기
-            setWeather(response.data) // 현재 날씨 저장
+            const data = await getCurrentWeather(searchValue) // 현재 날씨 가져오기
+            setWeather(data) // 현재 날씨 저장
             setError(null) // 에러 메시지 저장
          } catch (err) {
             setError('날씨 정보를 불러오는데 실패했습니다.') // 에러 메시지 저장

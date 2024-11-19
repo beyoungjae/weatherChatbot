@@ -17,17 +17,21 @@ export const useChat = () => {
 
    // 날씨 조회 함수
    const handleWeatherQuery = useCallback(async (city) => {
+      // 로딩 상태 설정
+      setIsLoading(true)
+
       try {
-         // 로딩 상태 설정
-         setIsLoading(true)
          // 날씨 데이터 조회
-         const weatherData = await getCurrentWeather(city)
+         const data = await getCurrentWeather(city)
          // 날씨 데이터 processMessage 함수를 통해 포맷팅
-         return processMessage.formatWeatherResponse(weatherData, city)
+         return processMessage.formatWeatherResponse(data, city)
       } catch (error) {
          console.error('날씨 정보 조회 실패:', error)
          if (error.response?.status === 404) {
-            return `죄송합니다. '${city}' 지역의 날씨 정보를 찾을 수 없습니다.`
+            return `죄송합니다. '${city}' 지역의 날씨 정보를 찾을 수 없습니다.
+            현재 조회 가능한 지역은
+            서울, 부산, 인천, 대구, 대전, 광주, 울산, 세종, 수원, 용인, 고양, 창원, 성남, 청주, 제주, 전주, 천안, 안산, 안양 입니다.
+            `
          }
          return '죄송합니다. 날씨 정보를 가져오는데 실패했습니다.'
       } finally {
