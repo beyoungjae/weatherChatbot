@@ -1,30 +1,52 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { getWeatherByCoords } from '../../api/weatherApi'
+
+// 위도/경도로 날씨 조회하는 thunk
+export const fetchWeatherByCoords = createAsyncThunk('weather/weatherByCoords', async ({ lat, lon }) => {
+   const response = await getWeatherByCoords(lat, lon)
+   return response
+})
 
 const weatherSlice = createSlice({
-   // 슬라이스 이름
    name: 'weather',
-   // 초기 상태
    initialState: {
-      showSummary: false, // 날씨 카드 표시 상태
-      loading: false, // 로딩 상태
-      error: null, // 에러 상태
-      isClosing: false, // 닫기 상태
+      showSummary: false,
+      loading: false,
+      error: null,
+      isClosing: false,
+      data: null, // 날씨 데이터를 저장할 필드 추가
+      weather: null, // 기존 weather 필드 유지
+      map: null, // 카카오맵 객체 저장
    },
-   // 리듀서 함수
    reducers: {
       showCard: (state) => {
-         state.showSummary = true // 날씨 카드 표시
+         state.showSummary = true
       },
       hideCard: (state) => {
-         state.showSummary = false // 날씨 카드 숨김
+         state.showSummary = false
       },
       weather: (state, action) => {
-         state.weather = action.payload // 날씨 정보 설정
+         state.weather = action.payload
       },
+   },
+   extraReducers: (builder) => {
+      builder
+         .addCase(fetchWeatherByCoords.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(fetchWeatherByCoords.fulfilled, (state, action) => {
+            state.loading = false
+            state.data = action.payload
+            state.error = null
+            state.showSummary = true // 날씨 데이터를 받으면 카드 표시
+         })
+         .addCase(fetchWeatherByCoords.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.error.message
+         })
    },
 })
 
-// 액션 상태 변경 내보내기
-export const { showCard, hideCard } = weatherSlice.actions
-// 리듀서 내보내기
+export const { showCard, hideCard, weather } = weatherSlice.actions
 export default weatherSlice.reducer

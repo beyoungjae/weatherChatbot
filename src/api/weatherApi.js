@@ -76,3 +76,14 @@ export const getFiveDayWeather = async (city) => {
       throw error
    }
 }
+
+// 위도/경도로 현재 날씨 조회
+export const getWeatherByCoords = async (lat, lon) => {
+   const { data } = await fetchFromApi('/weather', {
+      lat: lat,
+      lon: lon,
+   })
+   return data
+}
+
+export const KAKAO_MAP_KEY = 'cdc8d8d8117901578b9aec0ff8b430b4'

@@ -189,6 +189,10 @@ function Menu() {
                         날씨 정보
                      </StyledNavLink>
 
+                     <StyledNavLink to="/kakaomap" $isDarkMode={isDarkMode} className={({ isActive }) => (isActive ? 'active' : '')}>
+                        전국 날씨 정보
+                     </StyledNavLink>
+
                      <StyledButton $isDarkMode={isDarkMode} onClick={handleLogout}>
                         로그아웃
                      </StyledButton>

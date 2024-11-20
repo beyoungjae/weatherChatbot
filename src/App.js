@@ -6,6 +6,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import WeatherPage from './pages/WeatherPage'
 import { ThemeProvider } from './components/ThemeContext'
 import ChatbotPage from './pages/ChatbotPage'
+import KakaoMapWeatherPage from './pages/KakaoMapWeatherPage'
 
 const App = () => {
    return (
@@ -15,6 +16,7 @@ const App = () => {
             <Route path="/fivedays" element={<WeatherPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/chatbot" element={<ChatbotPage />} />
+            <Route path="/kakaomap" element={<KakaoMapWeatherPage />} />
             <Route path="*" element={<NotFoundPage />} />
          </Routes>
       </ThemeProvider>

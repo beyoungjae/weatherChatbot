@@ -148,6 +148,8 @@ function WeatherCard() {
    const weatherData = useSelector((state) => state.weather)
    // 로딩, 에러, 닫기 상태 가져오기
    const { loading, error, isClosing } = weatherData
+   // 로그인 상태 가져오기
+   const isLoggedIn = useSelector((state) => state.auth.user)
 
    // 검색 값이 변경될 때마다 날씨 정보 가져오기
    useEffect(() => {
@@ -173,6 +175,23 @@ function WeatherCard() {
          dispatch(hideCard())
       }, 100)
    }, [dispatch])
+
+   // 메인 페이지로 돌아왔을 때 카드가 띄워져 있으면 카드 닫기
+   useEffect(() => {
+      if (isClosing) {
+         handleClose()
+      }
+   }, [isClosing, handleClose])
+
+   // 로그인하지 않은 상태면 null 반환
+   if (!isLoggedIn) {
+      return null
+   }
+
+   // 로그인 상태가 null이면 카드 닫기
+   if (isLoggedIn === null) {
+      handleClose()
+   }
 
    // 로딩 중일 때 로딩 아이콘 반환
    if (loading) {
