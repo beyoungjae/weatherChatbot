@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
    // <React.StrictMode>
    <RecoilRoot>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_fetcherPersist: true, v7_startTransition: true, v7_relativeSplatPath: true }}>
          <Provider store={store}>
             <App />
          </Provider>

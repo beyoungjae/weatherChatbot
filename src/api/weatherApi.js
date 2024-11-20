@@ -86,4 +86,5 @@ export const getWeatherByCoords = async (lat, lon) => {
    return data
 }
 
+// 카카오 맵 API KEY
 export const KAKAO_MAP_KEY = 'cdc8d8d8117901578b9aec0ff8b430b4'
